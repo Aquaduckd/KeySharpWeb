@@ -190,8 +190,22 @@ function filterAndReaggregateWords(
   let total = 0;
 
   for (const [word, frequency] of counts.entries()) {
-    // Words are split by whitespace (can contain punctuation like "don't", "it's")
-    // Just normalize case if needed
+    // Check if word should be filtered (contains punctuation if filterPunctuation is enabled)
+    if (filters.filterPunctuation) {
+      // Check if word contains any punctuation
+      if (/[^\w\s]/.test(word)) {
+        continue; // Skip words with punctuation
+      }
+    }
+    
+    // Check if word should be filtered (contains whitespace if filterWhitespace is enabled)
+    if (filters.filterWhitespace) {
+      if (/\s/.test(word)) {
+        continue; // Skip words with whitespace
+      }
+    }
+    
+    // Normalize case if needed
     const normalized = normalizeSequence(word, filters.caseSensitive);
 
     // Reaggregate (combine counts for words that normalize to the same value)
