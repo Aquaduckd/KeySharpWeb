@@ -1,4 +1,4 @@
-# KeyWebTest
+# KeySharp Web
 
 A vanilla TypeScript project following the Three-Step Scalability Doctrine.
 
