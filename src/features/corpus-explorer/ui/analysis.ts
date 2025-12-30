@@ -43,7 +43,9 @@ function getSequenceColumnLabel(type: NGramType): string {
 function createTableRow(
   ngram: NGramData,
   type: NGramType,
-  total: number
+  total: number,
+  displayedCount?: number,
+  showRelativeFreq?: boolean
 ): HTMLTableRowElement {
   const row = document.createElement('tr');
   row.style.borderBottom = '1px solid #eee';
@@ -82,18 +84,30 @@ function createTableRow(
   frequencyCell.style.textAlign = 'right';
   row.appendChild(frequencyCell);
 
+  // Relative Frequency cell (only shown when filters are applied)
+  if (showRelativeFreq && displayedCount !== undefined) {
+    const relFreqCell = document.createElement('td');
+    const relFreqPercent = displayedCount > 0
+      ? ((ngram.frequency / displayedCount) * 100).toFixed(3)
+      : '0.000';
+    relFreqCell.textContent = `${relFreqPercent}%`;
+    relFreqCell.style.padding = '8px';
+    relFreqCell.style.textAlign = 'right';
+    row.appendChild(relFreqCell);
+  }
+
   return row;
 }
 
 /**
  * Create a spacer row to maintain scroll height in virtual scrolling.
  */
-function createSpacerRow(height: number): HTMLTableRowElement {
+function createSpacerRow(height: number, colspan: number): HTMLTableRowElement {
   const spacer = document.createElement('tr');
   spacer.style.height = `${height}px`;
   spacer.style.display = 'table-row';
   const spacerCell = document.createElement('td');
-  spacerCell.colSpan = 4;
+  spacerCell.colSpan = colspan;
   spacerCell.style.height = `${height}px`;
   spacerCell.style.padding = '0';
   spacerCell.style.margin = '0';
@@ -109,7 +123,9 @@ export function createNGramTable(
   container: HTMLElement,
   ngrams: NGramData[],
   type: NGramType,
-  total: number
+  total: number,
+  displayedCount?: number,
+  showRelativeFreq?: boolean
 ): void {
   // Clear container
   container.innerHTML = '';
@@ -183,6 +199,22 @@ export function createNGramTable(
   headerRow.appendChild(sequenceHeader);
   headerRow.appendChild(countHeader);
   headerRow.appendChild(frequencyHeader);
+
+  // Relative Frequency header (only shown when filters are applied)
+  if (showRelativeFreq) {
+    const relFreqHeader = document.createElement('th');
+    relFreqHeader.textContent = 'Rel Freq';
+    relFreqHeader.style.textAlign = 'right';
+    relFreqHeader.style.padding = '8px';
+    relFreqHeader.style.borderBottom = '2px solid #ccc';
+    relFreqHeader.style.width = '120px';
+    relFreqHeader.style.position = 'sticky';
+    relFreqHeader.style.top = '0';
+    relFreqHeader.style.backgroundColor = '#f8f8f8';
+    relFreqHeader.style.zIndex = '10';
+    headerRow.appendChild(relFreqHeader);
+  }
+
   thead.appendChild(headerRow);
   table.appendChild(thead);
 
@@ -218,21 +250,24 @@ export function createNGramTable(
     // Clear tbody
     tbody.innerHTML = '';
     
+    // Calculate colspan based on whether relative frequency column is shown
+    const colspan = showRelativeFreq ? 5 : 4;
+    
     // Add top spacer
     if (startIndex > 0) {
-      const topSpacer = createSpacerRow(startIndex * ROW_HEIGHT);
+      const topSpacer = createSpacerRow(startIndex * ROW_HEIGHT, colspan);
       tbody.appendChild(topSpacer);
     }
     
     // Add visible rows
     for (let i = startIndex; i < endIndex; i++) {
-      const row = createTableRow(ngrams[i], type, total);
+      const row = createTableRow(ngrams[i], type, total, displayedCount, showRelativeFreq);
       tbody.appendChild(row);
     }
     
     // Add bottom spacer
     if (endIndex < ngrams.length) {
-      const bottomSpacer = createSpacerRow((ngrams.length - endIndex) * ROW_HEIGHT);
+      const bottomSpacer = createSpacerRow((ngrams.length - endIndex) * ROW_HEIGHT, colspan);
       tbody.appendChild(bottomSpacer);
     }
   };
@@ -485,7 +520,7 @@ export function createAnalysisDisplay(
 
   // Update stats display in search panel if it exists
   // Total is always shown, Displayed and Percentage are only shown when filters are applied
-  const hasFilters = searchSettings && (searchSettings.query || (searchSettings.limit > 0));
+  const hasFilters = !!(searchSettings && (searchSettings.query || (searchSettings.limit > 0)));
   
   if (searchSettings) {
     const searchInputContainer = container.querySelector('#search-input-container') as HTMLElement;
@@ -552,7 +587,7 @@ export function createAnalysisDisplay(
     }
   }
   
-  createNGramTable(tableContainer, ngramData, selectedType, total);
+  createNGramTable(tableContainer, ngramData, selectedType, total, displayedCount, hasFilters);
   tableSection.appendChild(tableContainer);
 
   container.appendChild(tableSection);
