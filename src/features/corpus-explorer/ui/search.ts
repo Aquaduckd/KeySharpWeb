@@ -236,13 +236,19 @@ export function createSearchPanel(
     }
   );
 
+  // Limit group: label + input (mobile only)
+  const limitGroup = document.createElement('div');
+  limitGroup.style.display = 'flex';
+  limitGroup.style.alignItems = 'center';
+  limitGroup.style.gap = '6px';
+
   // Limit input (mobile only)
   const limitLabelMobile = document.createElement('label');
   limitLabelMobile.textContent = 'Limit:';
   limitLabelMobile.style.fontWeight = 'bold';
   limitLabelMobile.style.fontSize = '14px';
   
-  limitLine.appendChild(limitLabelMobile);
+  limitGroup.appendChild(limitLabelMobile);
 
   const limitInputMobile = document.createElement('input');
   limitInputMobile.type = 'number';
@@ -266,7 +272,8 @@ export function createSearchPanel(
     limitInputMobile.value = limitInput.value;
   });
   
-  limitLine.appendChild(limitInputMobile);
+  limitGroup.appendChild(limitInputMobile);
+  limitLine.appendChild(limitGroup);
   container.appendChild(limitLine);
   
   // Search input container (for stats to be appended to later)
