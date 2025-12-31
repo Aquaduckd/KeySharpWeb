@@ -327,11 +327,22 @@ export function createNGramTable(
     const scrollTop = scrollWrapper.scrollTop;
     let containerHeight = scrollWrapper.clientHeight;
     
-    // Fallback: if clientHeight is 0, try to get it from parent or use a default
+    // Fallback: if clientHeight is 0, try to get it from parent containers
     if (containerHeight === 0) {
-      containerHeight = scrollWrapper.parentElement?.clientHeight || 400;
+      // Try to get height from parent chain
+      let parent = scrollWrapper.parentElement;
+      while (parent && containerHeight === 0) {
+        containerHeight = parent.clientHeight;
+        parent = parent.parentElement;
+      }
+      
+      // If still 0, try window height as last resort
+      if (containerHeight === 0) {
+        containerHeight = window.innerHeight * 0.6; // Use 60% of viewport as fallback
+      }
+      
       // Set explicit height if we had to use fallback
-      if (scrollWrapper.parentElement) {
+      if (scrollWrapper.parentElement && scrollWrapper.clientHeight === 0) {
         scrollWrapper.style.height = `${containerHeight}px`;
       }
     }
@@ -377,8 +388,14 @@ export function createNGramTable(
 
   scrollWrapper.addEventListener('scroll', handleScroll);
 
-  // Initial render
-  updateVisibleRows();
+  // Initial render - use requestAnimationFrame to ensure layout is calculated
+  requestAnimationFrame(() => {
+    updateVisibleRows();
+    // Also trigger on next frame to catch any delayed layout calculations
+    requestAnimationFrame(() => {
+      updateVisibleRows();
+    });
+  });
 }
 
 
