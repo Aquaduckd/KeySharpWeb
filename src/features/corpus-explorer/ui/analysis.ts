@@ -4,6 +4,7 @@ import type { AnalysisResults, NGramData, NGramType, SearchSettings, FilterSetti
 import { applyTableStyles } from '../styles';
 import { matchesSearch } from '../search/matcher';
 import { createSearchPanel } from './search';
+import { setupResponsive } from '../../../foundations/responsive';
 
 /**
  * Get display name for n-gram type.
@@ -54,12 +55,35 @@ function createTableRow(
   const row = document.createElement('tr');
   row.style.borderBottom = '1px solid #eee';
   row.style.height = '40px';
+  
+  // Responsive: smaller height on mobile
+  setupResponsive(
+    row,
+    () => {
+      row.style.height = '35px';
+    },
+    () => {
+      row.style.height = '40px';
+    }
+  );
 
   // Rank cell
   const rankCell = document.createElement('td');
   rankCell.textContent = ngram.rank.toString();
   rankCell.style.padding = '8px';
   rankCell.style.textAlign = 'left';
+  
+  // Responsive: smaller padding on mobile
+  setupResponsive(
+    rankCell,
+    () => {
+      rankCell.style.padding = '6px';
+    },
+    () => {
+      rankCell.style.padding = '8px';
+    }
+  );
+  
   row.appendChild(rankCell);
 
   // Sequence cell
@@ -145,12 +169,40 @@ export function createNGramTable(
   scrollWrapper.style.width = '100%';
   scrollWrapper.style.position = 'relative';
   scrollWrapper.id = 'ngram-table-scroll-wrapper';
+  
+  // Responsive: enable horizontal scroll on mobile
+  setupResponsive(
+    scrollWrapper,
+    () => {
+      scrollWrapper.style.overflowX = 'auto';
+      scrollWrapper.style.overflowY = 'auto';
+    },
+    () => {
+      scrollWrapper.style.overflowX = 'hidden';
+      scrollWrapper.style.overflowY = 'auto';
+    }
+  );
 
   // Create table
   const table = document.createElement('table');
   applyTableStyles(table);
-  table.style.tableLayout = 'fixed';
   table.style.width = '100%';
+  
+  // Responsive: auto layout on mobile to fit content, fixed on desktop
+  setupResponsive(
+    table,
+    () => {
+      table.style.tableLayout = 'auto';
+      table.style.width = 'auto';
+      table.style.minWidth = '100%';
+      table.style.fontSize = '12px';
+    },
+    () => {
+      table.style.tableLayout = 'fixed';
+      table.style.width = '100%';
+      table.style.fontSize = '14px';
+    }
+  );
 
   // Create header
   const thead = document.createElement('thead');
@@ -166,6 +218,19 @@ export function createNGramTable(
   rankHeader.style.top = '0';
   rankHeader.style.backgroundColor = '#f8f8f8';
   rankHeader.style.zIndex = '10';
+  
+  // Responsive: smaller padding on mobile
+  setupResponsive(
+    rankHeader,
+    () => {
+      rankHeader.style.padding = '6px';
+      rankHeader.style.width = '60px';
+    },
+    () => {
+      rankHeader.style.padding = '8px';
+      rankHeader.style.width = '80px';
+    }
+  );
   
   const sequenceHeader = document.createElement('th');
   sequenceHeader.textContent = getSequenceColumnLabel(type);
@@ -187,6 +252,19 @@ export function createNGramTable(
   countHeader.style.top = '0';
   countHeader.style.backgroundColor = '#f8f8f8';
   countHeader.style.zIndex = '10';
+  
+  // Responsive: smaller padding and width on mobile
+  setupResponsive(
+    countHeader,
+    () => {
+      countHeader.style.padding = '6px';
+      countHeader.style.width = '90px';
+    },
+    () => {
+      countHeader.style.padding = '8px';
+      countHeader.style.width = '120px';
+    }
+  );
 
   const frequencyHeader = document.createElement('th');
   frequencyHeader.textContent = 'Frequency';
@@ -198,6 +276,19 @@ export function createNGramTable(
   frequencyHeader.style.top = '0';
   frequencyHeader.style.backgroundColor = '#f8f8f8';
   frequencyHeader.style.zIndex = '10';
+  
+  // Responsive: smaller padding and width on mobile
+  setupResponsive(
+    frequencyHeader,
+    () => {
+      frequencyHeader.style.padding = '6px';
+      frequencyHeader.style.width = '90px';
+    },
+    () => {
+      frequencyHeader.style.padding = '8px';
+      frequencyHeader.style.width = '120px';
+    }
+  );
 
   headerRow.appendChild(rankHeader);
   headerRow.appendChild(sequenceHeader);
@@ -307,21 +398,76 @@ export function createNGramSelector(
   selectorContainer.style.gap = '10px';
   selectorContainer.style.marginBottom = '15px';
   selectorContainer.style.justifyContent = 'space-between';
+  
+  // Responsive: stack vertically on mobile
+  setupResponsive(
+    selectorContainer,
+    () => {
+      selectorContainer.style.flexDirection = 'column';
+      selectorContainer.style.alignItems = 'stretch';
+      selectorContainer.style.gap = '8px';
+    },
+    () => {
+      selectorContainer.style.flexDirection = 'row';
+      selectorContainer.style.alignItems = 'center';
+      selectorContainer.style.gap = '10px';
+    }
+  );
 
   const leftSection = document.createElement('div');
   leftSection.style.display = 'flex';
   leftSection.style.alignItems = 'center';
   leftSection.style.gap = '10px';
+  
+  // Responsive: stack vertically on mobile
+  setupResponsive(
+    leftSection,
+    () => {
+      leftSection.style.flexDirection = 'column';
+      leftSection.style.alignItems = 'stretch';
+      leftSection.style.gap = '8px';
+    },
+    () => {
+      leftSection.style.flexDirection = 'row';
+      leftSection.style.alignItems = 'center';
+      leftSection.style.gap = '10px';
+    }
+  );
 
   const label = document.createElement('label');
   label.textContent = 'N-Gram Type:';
   label.style.fontWeight = 'bold';
+  
+  // Responsive: smaller font on mobile
+  setupResponsive(
+    label,
+    () => {
+      label.style.fontSize = '14px';
+    },
+    () => {
+      label.style.fontSize = '16px';
+    }
+  );
+  
   leftSection.appendChild(label);
 
   const select = document.createElement('select');
   select.id = 'ngram-type-selector';
   select.style.padding = '6px 12px';
   select.style.minWidth = '150px';
+  
+  // Responsive: smaller font on mobile
+  setupResponsive(
+    select,
+    () => {
+      select.style.fontSize = '14px';
+      select.style.padding = '5px 10px';
+    },
+    () => {
+      select.style.fontSize = '16px';
+      select.style.padding = '6px 12px';
+    }
+  );
 
   const options: { value: NGramType; label: string }[] = [
     { value: 'monograms', label: 'Monograms' },
@@ -354,6 +500,25 @@ export function createNGramSelector(
     rightSection.style.display = 'flex';
     rightSection.style.alignItems = 'center';
     rightSection.style.gap = '15px';
+    
+    // Responsive: on own line, evenly spaced, smaller gaps on mobile
+    setupResponsive(
+      rightSection,
+      () => {
+        rightSection.style.flexDirection = 'row';
+        rightSection.style.width = '100%';
+        rightSection.style.justifyContent = 'space-between';
+        rightSection.style.gap = '8px';
+        rightSection.style.marginTop = '10px';
+      },
+      () => {
+        rightSection.style.flexDirection = 'row';
+        rightSection.style.width = 'auto';
+        rightSection.style.justifyContent = 'flex-start';
+        rightSection.style.gap = '15px';
+        rightSection.style.marginTop = '0';
+      }
+    );
 
     // Filter Whitespace checkbox
     const whitespaceCheckbox = document.createElement('input');
@@ -371,6 +536,37 @@ export function createNGramSelector(
     whitespaceLabel.htmlFor = 'filter-whitespace';
     whitespaceLabel.textContent = 'Filter Whitespace';
     whitespaceLabel.style.cursor = 'pointer';
+    
+    // Responsive: smaller font on mobile
+    setupResponsive(
+      whitespaceLabel,
+      () => {
+        whitespaceLabel.style.fontSize = '12px';
+      },
+      () => {
+        whitespaceLabel.style.fontSize = '16px';
+      }
+    );
+    
+    // Create wrapper for checkbox and label
+    const whitespaceWrapper = document.createElement('div');
+    whitespaceWrapper.style.display = 'flex';
+    whitespaceWrapper.style.alignItems = 'center';
+    whitespaceWrapper.style.gap = '4px';
+    
+    // Responsive: smaller gap on mobile
+    setupResponsive(
+      whitespaceWrapper,
+      () => {
+        whitespaceWrapper.style.gap = '4px';
+      },
+      () => {
+        whitespaceWrapper.style.gap = '6px';
+      }
+    );
+    
+    whitespaceWrapper.appendChild(whitespaceCheckbox);
+    whitespaceWrapper.appendChild(whitespaceLabel);
 
     // Filter Punctuation checkbox
     const punctuationCheckbox = document.createElement('input');
@@ -388,6 +584,37 @@ export function createNGramSelector(
     punctuationLabel.htmlFor = 'filter-punctuation';
     punctuationLabel.textContent = 'Filter Punctuation';
     punctuationLabel.style.cursor = 'pointer';
+    
+    // Responsive: smaller font on mobile
+    setupResponsive(
+      punctuationLabel,
+      () => {
+        punctuationLabel.style.fontSize = '12px';
+      },
+      () => {
+        punctuationLabel.style.fontSize = '16px';
+      }
+    );
+    
+    // Create wrapper for checkbox and label
+    const punctuationWrapper = document.createElement('div');
+    punctuationWrapper.style.display = 'flex';
+    punctuationWrapper.style.alignItems = 'center';
+    punctuationWrapper.style.gap = '4px';
+    
+    // Responsive: smaller gap on mobile
+    setupResponsive(
+      punctuationWrapper,
+      () => {
+        punctuationWrapper.style.gap = '4px';
+      },
+      () => {
+        punctuationWrapper.style.gap = '6px';
+      }
+    );
+    
+    punctuationWrapper.appendChild(punctuationCheckbox);
+    punctuationWrapper.appendChild(punctuationLabel);
 
     // Collapse Case checkbox (inverted: checked = caseSensitive: false)
     const caseCheckbox = document.createElement('input');
@@ -405,13 +632,41 @@ export function createNGramSelector(
     caseLabel.htmlFor = 'collapse-case';
     caseLabel.textContent = 'Collapse Case';
     caseLabel.style.cursor = 'pointer';
+    
+    // Responsive: smaller font on mobile
+    setupResponsive(
+      caseLabel,
+      () => {
+        caseLabel.style.fontSize = '12px';
+      },
+      () => {
+        caseLabel.style.fontSize = '16px';
+      }
+    );
+    
+    // Create wrapper for checkbox and label
+    const caseWrapper = document.createElement('div');
+    caseWrapper.style.display = 'flex';
+    caseWrapper.style.alignItems = 'center';
+    caseWrapper.style.gap = '4px';
+    
+    // Responsive: smaller gap on mobile
+    setupResponsive(
+      caseWrapper,
+      () => {
+        caseWrapper.style.gap = '4px';
+      },
+      () => {
+        caseWrapper.style.gap = '6px';
+      }
+    );
+    
+    caseWrapper.appendChild(caseCheckbox);
+    caseWrapper.appendChild(caseLabel);
 
-    rightSection.appendChild(whitespaceCheckbox);
-    rightSection.appendChild(whitespaceLabel);
-    rightSection.appendChild(punctuationCheckbox);
-    rightSection.appendChild(punctuationLabel);
-    rightSection.appendChild(caseCheckbox);
-    rightSection.appendChild(caseLabel);
+    rightSection.appendChild(whitespaceWrapper);
+    rightSection.appendChild(punctuationWrapper);
+    rightSection.appendChild(caseWrapper);
 
     selectorContainer.appendChild(rightSection);
   }
@@ -464,7 +719,8 @@ export function createAnalysisDisplay(
   if (searchSettings) {
     const searchContainer = document.createElement('div');
     searchContainer.id = 'search-container';
-    searchContainer.style.marginBottom = '15px';
+    // No margin - removed
+    
     // Create initially without stats (will be updated after data processing)
     createSearchPanel(searchContainer, searchSettings, (settings: SearchSettings) => {
       if (onSearchChange) {
@@ -528,17 +784,24 @@ export function createAnalysisDisplay(
   const hasFilters = !!(searchSettings && (searchSettings.query || (searchSettings.limit > 0)));
   
   if (searchSettings) {
+    const searchLine = container.querySelector('#search-line') as HTMLElement;
     const searchInputContainer = container.querySelector('#search-input-container') as HTMLElement;
-    if (searchInputContainer) {
+    if (searchLine) {
       let statsContainer = container.querySelector('#stats-container') as HTMLElement;
       
-      if (!statsContainer) {
+      // Find or create stats container
+      // On mobile, stats go in limit line; on desktop, they go in search line (right side)
+      const limitLine = container.querySelector('#limit-line') as HTMLElement;
+      const currentIsMobile = window.innerWidth < 768;
+      const statsParent = currentIsMobile ? limitLine : searchLine;
+      
+      if (!statsContainer && statsParent) {
         // Create stats container if it doesn't exist
         statsContainer = document.createElement('div');
         statsContainer.id = 'stats-container';
         statsContainer.style.display = 'flex';
         statsContainer.style.alignItems = 'center';
-        statsContainer.style.gap = '15px';
+        statsContainer.style.gap = '8px';
 
         const finalCountSpan = document.createElement('span');
         finalCountSpan.id = 'final-count';
@@ -556,38 +819,82 @@ export function createAnalysisDisplay(
         percentageSpan.style.fontWeight = 'bold';
         statsContainer.appendChild(percentageSpan);
 
-        searchInputContainer.appendChild(statsContainer);
+        statsParent.appendChild(statsContainer);
       }
       
-      // Always show stats container and update Total
-      statsContainer.style.display = 'flex';
-      const finalCountSpan = statsContainer.querySelector('#final-count') as HTMLElement;
-      const preFilterCountSpan = statsContainer.querySelector('#pre-filter-count') as HTMLElement;
-      const percentageSpan = statsContainer.querySelector('#percentage') as HTMLElement;
+      // Function to update stats display
+      const updateStatsDisplay = () => {
+        if (!statsContainer) return;
+        
+        const isMobile = window.innerWidth < 768;
+        const targetParent = isMobile ? limitLine : searchLine;
+        
+        // Move stats container to correct parent if needed
+        if (statsContainer.parentElement !== targetParent && targetParent) {
+          targetParent.appendChild(statsContainer);
+        }
+        
+        statsContainer.style.display = 'flex';
+        
+        const finalCountSpan = statsContainer.querySelector('#final-count') as HTMLElement;
+        const preFilterCountSpan = statsContainer.querySelector('#pre-filter-count') as HTMLElement;
+        const percentageSpan = statsContainer.querySelector('#percentage') as HTMLElement;
+        
+        if (isMobile) {
+          // Mobile: inline with limit, right-justified, simplified text "number1/number2 number3"
+          statsContainer.style.justifyContent = 'flex-end';
+          statsContainer.style.gap = '8px';
+          
+          if (preFilterCountSpan) {
+            preFilterCountSpan.textContent = `${preFilterCount.toLocaleString()}`;
+            preFilterCountSpan.style.display = 'inline';
+          }
+          if (hasFilters && finalCountSpan) {
+            finalCountSpan.textContent = `${displayedCount.toLocaleString()}/`;
+            finalCountSpan.style.display = 'inline';
+          } else if (finalCountSpan) {
+            finalCountSpan.style.display = 'none';
+          }
+          if (hasFilters && percentageSpan) {
+            percentageSpan.textContent = `${percentage.toFixed(3)}%`;
+            percentageSpan.style.display = 'inline';
+          } else if (percentageSpan) {
+            percentageSpan.style.display = 'none';
+          }
+        } else {
+          // Desktop: on own line, right-justified, full text
+          statsContainer.style.justifyContent = 'flex-end';
+          statsContainer.style.gap = '15px';
+          
+          if (preFilterCountSpan) {
+            preFilterCountSpan.textContent = `Total: ${preFilterCount.toLocaleString()}`;
+            preFilterCountSpan.style.display = 'inline';
+          }
+          if (hasFilters && finalCountSpan) {
+            finalCountSpan.textContent = `Displayed: ${displayedCount.toLocaleString()}`;
+            finalCountSpan.style.display = 'inline';
+          } else if (finalCountSpan) {
+            finalCountSpan.style.display = 'none';
+          }
+          if (hasFilters && percentageSpan) {
+            percentageSpan.textContent = `${percentage.toFixed(3)}%`;
+            percentageSpan.style.display = 'inline';
+          } else if (percentageSpan) {
+            percentageSpan.style.display = 'none';
+          }
+        }
+      };
       
-      // Always update and show Total
-      if (preFilterCountSpan) {
-        preFilterCountSpan.textContent = `Total: ${preFilterCount.toLocaleString()}`;
-        preFilterCountSpan.style.display = 'inline';
-      }
-      
-      // Conditionally show/hide Displayed and Percentage
-      if (hasFilters) {
-        if (finalCountSpan) {
-          finalCountSpan.textContent = `Displayed: ${displayedCount.toLocaleString()}`;
-          finalCountSpan.style.display = 'inline';
-        }
-        if (percentageSpan) {
-          percentageSpan.textContent = `${percentage.toFixed(3)}%`;
-          percentageSpan.style.display = 'inline';
-        }
-      } else {
-        if (finalCountSpan) {
-          finalCountSpan.style.display = 'none';
-        }
-        if (percentageSpan) {
-          percentageSpan.style.display = 'none';
-        }
+      // Update stats display
+      if (statsContainer) {
+        updateStatsDisplay();
+        
+        // Setup responsive listener to update when viewport changes
+        setupResponsive(
+          statsContainer,
+          () => updateStatsDisplay(),
+          () => updateStatsDisplay()
+        );
       }
     }
   }

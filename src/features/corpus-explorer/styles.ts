@@ -1,5 +1,7 @@
 // Styling for the corpus-explorer feature
 
+import { setupResponsive } from '../../foundations/responsive';
+
 export function applyContainerStyles(container: HTMLElement): void {
   container.style.display = 'flex';
   container.style.flexDirection = 'column';
@@ -7,6 +9,17 @@ export function applyContainerStyles(container: HTMLElement): void {
   container.style.width = '100%';
   container.style.overflow = 'hidden';
   container.style.gap = '20px';
+  
+  // Responsive: smaller gap on mobile
+  setupResponsive(
+    container,
+    () => {
+      container.style.gap = '10px';
+    },
+    () => {
+      container.style.gap = '20px';
+    }
+  );
 }
 
 export function applySectionStyles(section: HTMLElement): void {

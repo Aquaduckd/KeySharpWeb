@@ -1,5 +1,7 @@
 // Internal styling logic for the main-panel-tabs feature
 
+import { setupResponsive } from '../../foundations/responsive';
+
 export function applyTabsContainerStyles(container: HTMLElement): void {
   container.style.display = 'flex';
   container.style.flexDirection = 'column';
@@ -18,6 +20,20 @@ export function applyTabBarStyles(tabBar: HTMLElement): void {
   tabBar.style.margin = '0';
   tabBar.style.listStyle = 'none';
   tabBar.style.cursor = 'default';
+  
+  // Responsive: enable horizontal scroll on mobile
+  setupResponsive(
+    tabBar,
+    () => {
+      tabBar.style.overflowX = 'auto';
+      tabBar.style.overflowY = 'hidden';
+      tabBar.style.scrollBehavior = 'smooth';
+    },
+    () => {
+      tabBar.style.overflowX = 'hidden';
+      tabBar.style.overflowY = 'hidden';
+    }
+  );
 }
 
 export function applyTabStyles(tab: HTMLElement, isActive: boolean): void {
@@ -30,6 +46,22 @@ export function applyTabStyles(tab: HTMLElement, isActive: boolean): void {
   tab.style.borderBottom = isActive ? '2px solid #007bff' : '2px solid transparent';
   tab.style.marginBottom = isActive ? '-2px' : '0';
   tab.style.transition = 'background-color 0.2s, color 0.2s';
+  tab.style.textAlign = 'center';
+  
+  // Responsive: smaller padding and font on mobile, full width on mobile, fixed width on desktop
+  setupResponsive(
+    tab,
+    () => {
+      tab.style.padding = '10px 16px';
+      tab.style.fontSize = '14px';
+      tab.style.flex = '1';
+    },
+    () => {
+      tab.style.padding = '12px 20px';
+      tab.style.fontSize = '16px';
+      tab.style.flex = '0 0 auto';
+    }
+  );
   
   tab.addEventListener('mouseenter', () => {
     if (!isActive) {
@@ -49,6 +81,17 @@ export function applyTabContentAreaStyles(contentArea: HTMLElement): void {
   contentArea.style.overflow = 'auto';
   contentArea.style.padding = '20px';
   contentArea.style.backgroundColor = '#ffffff';
+  
+  // Responsive: smaller padding on mobile
+  setupResponsive(
+    contentArea,
+    () => {
+      contentArea.style.padding = '10px';
+    },
+    () => {
+      contentArea.style.padding = '20px';
+    }
+  );
 }
 
 export function applyDraggingStyles(tab: HTMLElement): void {
