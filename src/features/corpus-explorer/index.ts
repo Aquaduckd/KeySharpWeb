@@ -9,6 +9,7 @@ import { applyContainerStyles } from './styles';
 import { exportToCSV } from './export/csv';
 import { matchesSearch } from './search/matcher';
 import { getCurrentURLState, updateURL } from './url-state';
+import { setupResponsive } from '../../foundations/responsive';
 import type { CorpusExplorerState, SearchSettings, AnalysisResults, NGramType, FilterSettings, NGramData } from './types';
 
 let currentState: CorpusExplorerState = {
@@ -196,6 +197,17 @@ export function initializeCorpusExplorer(container: HTMLElement): void {
   analysisSection.style.paddingTop = '20px'; // Padding only on top to separate from border
   analysisSection.style.display = 'flex';
   analysisSection.style.flexDirection = 'column';
+  
+  // Responsive: reduce top padding on mobile
+  setupResponsive(
+    analysisSection,
+    () => {
+      analysisSection.style.paddingTop = '10px';
+    },
+    () => {
+      analysisSection.style.paddingTop = '20px';
+    }
+  );
   createAnalysisDisplay(analysisSection, null, currentState.selectedNGramType, handleNGramTypeChange, currentState.search, currentState.search.filters, handleFilterChange, handleSearchChange);
   container.appendChild(analysisSection);
 

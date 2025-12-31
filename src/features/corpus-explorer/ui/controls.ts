@@ -43,18 +43,24 @@ export function createControlsPanel(
   leftSection.style.alignItems = 'center';
   leftSection.style.flexWrap = 'wrap';
   
-  // Responsive: stack vertically on mobile
+  // Responsive: space evenly on mobile, normal flow on desktop
   setupResponsive(
     leftSection,
     () => {
-      leftSection.style.flexDirection = 'column';
-      leftSection.style.alignItems = 'stretch';
+      leftSection.style.flexDirection = 'row';
+      leftSection.style.alignItems = 'center';
       leftSection.style.gap = '10px';
+      leftSection.style.flexWrap = 'wrap';
+      leftSection.style.justifyContent = 'space-between';
+      leftSection.style.width = '100%';
     },
     () => {
       leftSection.style.flexDirection = 'row';
       leftSection.style.alignItems = 'center';
       leftSection.style.gap = '20px';
+      leftSection.style.flexWrap = 'wrap';
+      leftSection.style.justifyContent = 'flex-start';
+      leftSection.style.width = 'auto';
     }
   );
 
@@ -81,12 +87,12 @@ export function createControlsPanel(
   presetSelect.style.padding = '8px';
   presetSelect.style.minWidth = '200px';
   
-  // Responsive: full width on mobile
+  // Responsive: smaller min width on mobile to stay inline
   setupResponsive(
     presetSelect,
     () => {
-      presetSelect.style.minWidth = '100%';
-      presetSelect.style.width = '100%';
+      presetSelect.style.minWidth = '150px';
+      presetSelect.style.width = 'auto';
     },
     () => {
       presetSelect.style.minWidth = '200px';

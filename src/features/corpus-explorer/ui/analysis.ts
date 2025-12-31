@@ -419,18 +419,22 @@ export function createNGramSelector(
   leftSection.style.alignItems = 'center';
   leftSection.style.gap = '10px';
   
-  // Responsive: stack vertically on mobile
+  // Responsive: space evenly on mobile, normal flow on desktop
   setupResponsive(
     leftSection,
     () => {
-      leftSection.style.flexDirection = 'column';
-      leftSection.style.alignItems = 'stretch';
+      leftSection.style.flexDirection = 'row';
+      leftSection.style.alignItems = 'center';
       leftSection.style.gap = '8px';
+      leftSection.style.justifyContent = 'space-between';
+      leftSection.style.width = '100%';
     },
     () => {
       leftSection.style.flexDirection = 'row';
       leftSection.style.alignItems = 'center';
       leftSection.style.gap = '10px';
+      leftSection.style.justifyContent = 'flex-start';
+      leftSection.style.width = 'auto';
     }
   );
 
